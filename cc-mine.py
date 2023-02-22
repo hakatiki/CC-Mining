@@ -5,7 +5,20 @@ import wget
 import os
 import gc
 import gzip
+import sys
 
+
+TEXT_MODE = False
+INDEX_BEGIN = 0
+TEXT_BEGIN = 0
+for i in sys.argv:
+    if "text_mode" in i:
+        TEXT_MODE = True
+    if "continue_index" in i:
+        INDEX_BEGIN = int(i.split("=")[-1])
+    if "continue_text" in i:
+        TEXT_BEGIN = int(i.split("=")[-1])
+    
 
 PATH = 'https://data.commoncrawl.org/'
 LANG = "hu"
@@ -55,24 +68,24 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
         idx += 1
 
     return contents, db
-
-for i in tqdm(range(len(urls))):
-    current_file = 'current_index.gz.parquet'
-    filename = urls[0][i]
-    url = PATH + filename
-    if wget_file(url, current_file):
-        print(f"Downloaded {filename}")
-        df = []
-        gc.collect()
-        df = pd.read_parquet(current_file)  
-        df = df[df['content_languages'].str.startswith('hu', na=False)]
-        if (i == 0):
-            df.to_csv('hungarian.csv', header=True, index=False)
-        else:
-            df.to_csv('hungarian.csv', mode='a', header=False, index=False)
-        print(f"Saved {len(df)} rows to file")
-        os.remove(current_file)
-        print("Removed current file")
+if not TEXT_MODE:
+    for i in tqdm(range(INDEX_BEGIN, len(urls))):
+        current_file = 'current_index.gz.parquet'
+        filename = urls[0][i]
+        url = PATH + filename
+        if wget_file(url, current_file):
+            print(f"Downloaded {filename}")
+            df = []
+            gc.collect()
+            df = pd.read_parquet(current_file)  
+            df = df[df['content_languages'].str.startswith('hu', na=False)]
+            if (i == 0):
+                df.to_csv('hungarian.csv', header=True, index=False)
+            else:
+                df.to_csv('hungarian.csv', mode='a', header=False, index=False)
+            print(f"Saved {len(df)} rows to file")
+            os.remove(current_file)
+            print("Removed current file")
 
 
 print("------------------------------------")
@@ -92,7 +105,7 @@ total_count = 0
 file_index = 0
 db = set()
         
-for i in tqdm(range(len(hungarian_sorted))):
+for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
     filename = hungarian_sorted["warc_filename"][i]
     url = warc_2_wet(PATH, filename)
     print(f"Downloading {url}")

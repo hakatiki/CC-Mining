@@ -135,7 +135,7 @@ for i in tqdm(range(len(hungarian_sorted))):
         text_buffer.extend(hungarian_text)
         total_count += len(hungarian_text)
         current_count += len(hungarian_text)
-        if current_count > 10000:
+        if current_count > 10_000_000:
             text_buffer = list(set(text_buffer))
             # write to file
             with open(f"hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:

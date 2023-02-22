@@ -17,7 +17,7 @@ def get_index(path, current_file=None):
         print('Error downloading', path)
         
 
-for i in tqdm(range(urls)):
+for i in tqdm(range(len(urls))):
     current_file = 'current_index.gz.parquet'
     filename = urls[0][i]
     url = path + filename

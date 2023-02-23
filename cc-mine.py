@@ -102,38 +102,38 @@ hungarian_sorted = hungarian_index.groupby(['warc_filename'])['url_host_name'].c
 print(f"Unique sites: {len(hungarian_sorted)}")
 hungarian_sorted.to_csv("hungarian_sorted.csv", index=False)
 
-# temp_file_name = "current_wet_tmp.warc.wet.gz"
-# text_buffer = []
-# current_count = 0
-# total_count = 0
-# file_index = 0
-# db = set()
+temp_file_name = "current_wet_tmp.warc.wet.gz"
+text_buffer = []
+current_count = 0
+total_count = 0
+file_index = 0
+db = set()
         
-# for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
-#     filename = hungarian_sorted["warc_filename"][i]
-#     url = warc_2_wet(PATH, filename)
-#     print(f"Downloading {url}")
-#     if wget_file(url, temp_file_name):
-#         print(f"Downloaded {filename}")
-#         with gzip.open(temp_file_name, 'rb') as f:
-#             current_file_content = f.read().decode('utf-8').splitlines()
-#         print(f"Read {len(current_file_content)} lines")
-#         hungarian_text, db = get_hungarian_from_wet(current_file_content, db,)
-#         print(f"Found {len(hungarian_text)} lines")
+for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
+    filename = hungarian_sorted["warc_filename"][i]
+    url = warc_2_wet(PATH, filename)
+    print(f"Downloading {url}")
+    if wget_file(url, temp_file_name):
+        print(f"Downloaded {filename}")
+        with gzip.open(temp_file_name, 'rb') as f:
+            current_file_content = f.read().decode('utf-8').splitlines()
+        print(f"Read {len(current_file_content)} lines")
+        hungarian_text, db = get_hungarian_from_wet(current_file_content, db,)
+        print(f"Found {len(hungarian_text)} lines")
 
-#         text_buffer.extend(hungarian_text)
-#         total_count += len(hungarian_text)
-#         current_count += len(hungarian_text)
-#         if current_count > 10_000_000:
-#             text_buffer = list(set(text_buffer))
-#             # write to file
-#             with open(f"./data/hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:
-#                 f.write("\n".join(text_buffer))
-#             file_index += 1
-#             current_count = 0
-#             text_buffer = []
-#             print(f"Saved in total: {total_count} lines to files")
+        text_buffer.extend(hungarian_text)
+        total_count += len(hungarian_text)
+        current_count += len(hungarian_text)
+        if current_count > 10_000_000:
+            text_buffer = list(set(text_buffer))
+            # write to file
+            with open(f"./data/hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:
+                f.write("\n".join(text_buffer))
+            file_index += 1
+            current_count = 0
+            text_buffer = []
+            print(f"Saved in total: {total_count} lines to files")
         
-#         gc.collect()
-#         os.remove(temp_file_name)
-#         print(f"Removed {temp_file_name}")
+        gc.collect()
+        os.remove(temp_file_name)
+        print(f"Removed {temp_file_name}")

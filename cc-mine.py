@@ -96,7 +96,7 @@ print("------------------------------------")
 gc.collect()
 hungarian_index = pd.read_csv('hungarian.csv', low_memory=False)
 hungarian_sorted = hungarian_index.groupby(['warc_filename'])['url_host_name'].count().reset_index(name='count').sort_values(['count'], ascending=False)
-
+print(f"Unique sites: {len(hungarian_sorted)}")
 
 temp_file_name = "current_wet_tmp.warc.wet.gz"
 text_buffer = []
@@ -123,7 +123,7 @@ for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
         if current_count > 10_000_000:
             text_buffer = list(set(text_buffer))
             # write to file
-            with open(f"data/hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:
+            with open(f"./data/hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:
                 f.write("\n".join(text_buffer))
             file_index += 1
             current_count = 0

@@ -92,15 +92,18 @@ print("------------------------------------")
 print("Finished downloading index files")
 print("------------------------------------")
 
-
-gc.collect()
-hungarian_index = pd.read_csv('hungarian.csv', low_memory=False, usecols=['warc_filename', 'url_host_name'])
-print("Loaded data")
-# hungarian_index = hungarian_index.loc[:, ['warc_filename', 'url_host_name']]
-gc.collect()
-hungarian_sorted = hungarian_index.groupby(['warc_filename'])['url_host_name'].count().reset_index(name='count').sort_values(['count'], ascending=False)
-print(f"Unique sites: {len(hungarian_sorted)}")
-hungarian_sorted.to_csv("hungarian_sorted.csv", index=False)
+if not os.path.exists("hungarian_sorted.csv"):
+    gc.collect()
+    hungarian_index = pd.read_csv('hungarian.csv', low_memory=False, usecols=['warc_filename', 'url_host_name'])
+    print("Loaded data")
+    # hungarian_index = hungarian_index.loc[:, ['warc_filename', 'url_host_name']]
+    gc.collect()
+    hungarian_sorted = hungarian_index.groupby(['warc_filename'])['url_host_name'].count().reset_index(name='count').sort_values(['count'], ascending=False)
+    print(f"Unique sites: {len(hungarian_sorted)}")
+    hungarian_sorted.to_csv("hungarian_sorted.csv", index=False)
+else:
+    hungarian_sorted = pd.read_csv("hungarian_sorted.csv")
+    print("Loaded sorted data")
 
 temp_file_name = "current_wet_tmp.warc.wet.gz"
 text_buffer = []

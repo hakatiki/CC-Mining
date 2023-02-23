@@ -94,7 +94,8 @@ print("------------------------------------")
 
 
 gc.collect()
-hungarian_index = pd.read_csv('hungarian.csv', low_memory=False)
+hungarian_index = pd.read_csv('hungarian.csv', low_memory=True)['warc_filename', 'url_host_name']
+print("Loaded data")
 hungarian_sorted = hungarian_index.groupby(['warc_filename'])['url_host_name'].count().reset_index(name='count').sort_values(['count'], ascending=False)
 print(f"Unique sites: {len(hungarian_sorted)}")
 

@@ -11,6 +11,7 @@ import sys
 TEXT_MODE = False
 INDEX_BEGIN = 0
 TEXT_BEGIN = 0
+TXT_IDX = 0
 for i in sys.argv:
     if "text_mode" in i:
         TEXT_MODE = True
@@ -18,6 +19,8 @@ for i in sys.argv:
         INDEX_BEGIN = int(i.split("=")[-1])
     if "continue_text" in i:
         TEXT_BEGIN = int(i.split("=")[-1])
+    if "txt_idx" in i:
+        TXT_IDX = int(i.split("=")[-1])
     
 
 PATH = 'https://data.commoncrawl.org/'
@@ -109,7 +112,7 @@ temp_file_name = "current_wet_tmp.warc.wet.gz"
 text_buffer = []
 current_count = 0
 total_count = 0
-file_index = 0
+file_index = TXT_IDX
 db = set()
         
 for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
@@ -127,6 +130,8 @@ for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
         text_buffer.extend(hungarian_text)
         total_count += len(hungarian_text)
         current_count += len(hungarian_text)
+        print("Current count: ", current_count)
+        print("Total count: ", total_count)
         if current_count > 1_000_000:
             text_buffer = list(set(text_buffer))
             # write to file

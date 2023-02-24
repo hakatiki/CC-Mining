@@ -133,7 +133,7 @@ for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
         total_count += len(hungarian_text)
         current_count += len(hungarian_text)
         # current time
-        print("Current Time =", datetime.now())
+        print("Current Time =", datetime.datetime.now())
         print("Current count: ", current_count)
         print("Total count: ", total_count)
         if current_count > 1_000_000:

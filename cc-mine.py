@@ -73,7 +73,7 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
 
     return contents, db
 if not TEXT_MODE:
-    for i in tqdm(range(INDEX_BEGIN, len(urls))):
+    for i in range(INDEX_BEGIN, len(urls)):
         current_file = 'current_index.gz.parquet'
         filename = urls[0][i]
         url = PATH + filename
@@ -116,7 +116,7 @@ total_count = 0
 file_index = TXT_IDX
 db = set()
         
-for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
+for i in range(TEXT_BEGIN, len(hungarian_sorted)):
     filename = hungarian_sorted["warc_filename"][i]
     print("Index state: ", i)
     url = warc_2_wet(PATH, filename)

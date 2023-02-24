@@ -1,3 +1,4 @@
+import datetime
 import pandas as pd
 from tqdm import tqdm
 from time import sleep
@@ -117,6 +118,7 @@ db = set()
         
 for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
     filename = hungarian_sorted["warc_filename"][i]
+    print("Index state: ", i)
     url = warc_2_wet(PATH, filename)
     print(f"Downloading {url}")
     if wget_file(url, temp_file_name):
@@ -130,6 +132,8 @@ for i in tqdm(range(TEXT_BEGIN, len(hungarian_sorted))):
         text_buffer.extend(hungarian_text)
         total_count += len(hungarian_text)
         current_count += len(hungarian_text)
+        # current time
+        print("Current Time =", datetime.now())
         print("Current count: ", current_count)
         print("Total count: ", total_count)
         if current_count > 1_000_000:

@@ -77,10 +77,10 @@ if not TEXT_MODE:
         current_file = 'current_index.gz.parquet'
         filename = urls[0][i]
         url = PATH + filename
+        gc.collect()
         if wget_file(url, current_file):
             print(f"Downloaded {filename}")
             df = []
-            gc.collect()
             df = pd.read_parquet(current_file)  
             df = df[df['content_languages'].str.startswith('hu', na=False)]
             if (i == 0):

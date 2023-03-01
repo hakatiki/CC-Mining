@@ -11,3 +11,11 @@ part-00000-26160df0-1827-4787-a515-95ecaa2c9688.c000.gz.parquet
 part-00000-a0906200-461b-4808-9b94-6c53daf73f61.c000.gz.parquet
 hungarian_text_0.txt
 hungarian_sorted.csv
+data/hungarian_text_0 copy.txt
+data/hungarian_sorted.zip
+data/nohup_zip.zip
+data_vizz/char_freq_common.png
+data_vizz/char_freq_uncommon.png
+data_vizz/common_word.png
+data_vizz/line_lenght_hist.png
+data_vizz/log_line_length.png

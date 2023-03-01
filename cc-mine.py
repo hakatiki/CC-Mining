@@ -48,6 +48,17 @@ def warc_2_wet(base, filename):
     filename = filename.replace('.warc.gz', '.warc.wet.gz')
     return base + filename
 
+def deduplicate(tmp_list):
+    visited = set()
+    deduped = []
+    for i in tmp_list:
+        if i in visited:
+            continue
+        else:
+            deduped.append(i)
+            visited.add(i)
+    return deduped
+
 def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
     idx = 0
     contents = []
@@ -60,6 +71,7 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
             else:
                 can_save = True
                 db.add(current_url)
+        tmp_contents = []
         if can_save and filecontent[idx].startswith("WARC-Identified-Content-Language:") and target_lang in filecontent[idx]:
             # print(filecontent[idx+1])
             if "Content-Type: text/plain" in filecontent[idx+1]:
@@ -67,8 +79,10 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
                 idx = idx + 3
                 while not (filecontent[idx] == "" and filecontent[idx+1] == "" ) :
                     if len(filecontent[idx]) > 60:
-                        contents.append(filecontent[idx])
+                        tmp_contents.append(filecontent[idx])
                     idx +=1
+        contents.extend(deduplicate(tmp_contents))
+        gc.collect()
         idx += 1
 
     return contents, db
@@ -81,7 +95,9 @@ if not TEXT_MODE:
         if wget_file(url, current_file):
             print(f"Downloaded {filename}")
             df = []
+            gc.collect()
             df = pd.read_parquet(current_file)  
+            gc.collect()
             df = df[df['content_languages'].str.startswith('hu', na=False)]
             if (i == 0):
                 df.to_csv('hungarian.csv', header=True, index=False)
@@ -127,6 +143,7 @@ for i in range(TEXT_BEGIN, len(hungarian_sorted)):
             current_file_content = f.read().decode('utf-8').splitlines()
         print(f"Read {len(current_file_content)} lines")
         hungarian_text, db = get_hungarian_from_wet(current_file_content, db,)
+        gc.collect()
         print(f"Found {len(hungarian_text)} lines")
 
         text_buffer.extend(hungarian_text)
@@ -137,15 +154,15 @@ for i in range(TEXT_BEGIN, len(hungarian_sorted)):
         print("Current count: ", current_count)
         print("Total count: ", total_count)
         if current_count > 1_000_000:
-            text_buffer = list(set(text_buffer))
+            # text_buffer = list(set(text_buffer))
             # write to file
             with open(f"./data/hungarian_text_{file_index}.txt", "w", encoding="utf-8") as f:
                 f.write("\n".join(text_buffer))
             file_index += 1
             current_count = 0
             text_buffer = []
+            gc.collect()
             print(f"Saved in total: {total_count} lines to files")
-        
         gc.collect()
         os.remove(temp_file_name)
         print(f"Removed {temp_file_name}")

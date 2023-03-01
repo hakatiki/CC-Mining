@@ -73,6 +73,8 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
                         tmp_contents.append(filecontent[idx])
                         seen.add(filecontent[idx])
                     idx +=1
+                tmp_contents.append("")
+                tmp_contents.append("")
         
         if (tmp_contents != []):
             # print(idx)

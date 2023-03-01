@@ -48,17 +48,6 @@ def warc_2_wet(base, filename):
     filename = filename.replace('.warc.gz', '.warc.wet.gz')
     return base + filename
 
-def deduplicate(tmp_list):
-    visited = set()
-    deduped = []
-    for i in tmp_list:
-        if i in visited:
-            continue
-        else:
-            deduped.append(i)
-            visited.add(i)
-    return deduped
-
 def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
     idx = 0
     contents = []
@@ -72,17 +61,23 @@ def get_hungarian_from_wet(filecontent, db, target_lang=CC_LANG):
                 can_save = True
                 db.add(current_url)
         tmp_contents = []
+       
         if can_save and filecontent[idx].startswith("WARC-Identified-Content-Language:") and target_lang in filecontent[idx]:
+            seen = set()
             # print(filecontent[idx+1])
             if "Content-Type: text/plain" in filecontent[idx+1]:
                 # print(filecontent[idx])
                 idx = idx + 3
                 while not (filecontent[idx] == "" and filecontent[idx+1] == "" ) :
-                    if len(filecontent[idx]) > 60:
+                    if len(filecontent[idx]) > 60 and filecontent[idx] not in seen:
                         tmp_contents.append(filecontent[idx])
+                        seen.add(filecontent[idx])
                     idx +=1
-        contents.extend(deduplicate(tmp_contents))
-        gc.collect()
+        
+        if (tmp_contents != []):
+            # print(idx)
+            contents.extend(tmp_contents)
+            # gc.collect()
         idx += 1
 
     return contents, db

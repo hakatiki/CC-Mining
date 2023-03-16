@@ -41,6 +41,7 @@ def wget_file(path, current_file=None):
         return True
     except:
         print('Error downloading', path)
+        
         return False
 
 def warc_2_wet(base, filename):

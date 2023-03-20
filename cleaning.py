@@ -1,8 +1,13 @@
 import numpy as np
 from Levenshtein import distance
-from tqdm import tqdm# load ./data/hungarian_data_0.txt
-with open('./data/hungarian_text_0.txt', encoding="utf-8") as f:
-    data = f.readlines()
+from tqdm import tqdm
+import os
+
+
+WINDOW = 10000
+paths = os.listdir('./data')
+paths = [path for path in paths if path.endswith('.txt')]
+
 def remove_near_duplicates(strings):
     # Create an empty list to store unique strings
     unique_strings = []
@@ -37,22 +42,13 @@ def remove_near_duplicates(strings):
     # Return the list of unique strings
     return unique_strings, duplicates
 
-from concurrent.futures import ThreadPoolExecutor
 
-def remove_near_duplicates_wrapper(data):
-    return remove_near_duplicates(data)
-
-WINDOW = 10000
-num_processes=16
-executor = ThreadPoolExecutor(max_workers=num_processes)
-futures = []
-
-for i in range(0, len(data), WINDOW):
-    subset = data[i:i+WINDOW].copy()
-    future = executor.submit(remove_near_duplicates_wrapper, subset)
-    futures.append(future)
-print("setup complete")
-unduped = []
-for future in futures:
-    unique, dupes = future.result()
-    unduped.extend(unique)
+for i in paths:
+    with open('./data/'+i, encoding="utf-8") as f:
+        data = f.readlines()
+    unduped = []
+    for i in range(0, len(data),WINDOW ):
+        unique, dupes = remove_near_duplicates(data[i:i+WINDOW])
+        unduped.extend(unique)
+    with open('./dedup-data/'+i, encoding="utf-8") as f:
+        f.write(unduped)

@@ -5,7 +5,7 @@ import os
 
 
 WINDOW = 5000
-paths = os.listdir('./duped')
+paths = os.listdir('./data')
 paths = [path for path in paths if path.endswith('.txt')]
 
 def remove_near_duplicates(strings):

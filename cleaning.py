@@ -50,7 +50,7 @@ def remove_near_duplicates(strings):
 import multiprocessing
 
 def remove_duplicates(path):
-    with open('./duped/'+path, encoding="utf-8") as f:
+    with open('./data/'+path, encoding="utf-8") as f:
         data = f.readlines()
     unduped = []
     for i in range(0, len(data),WINDOW ):
